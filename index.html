@@ -1457,42 +1457,91 @@ async function refreshResults(){
   }catch(e){ showToast('⚠ 네트워크 오류 · Network error'); }
   finally{ if(btn){ btn.disabled=false; btn.innerHTML='🔄 새로고침 · Refresh'; } }
 }
-/* ---- 면담 가이드 · FAQ (초안 — 실제 면담 가이드 문구를 별도로 주시면 그 내용으로 교체 가능) ---- */
+/* ---- 면담 가이드 · FAQ ---- */
+// 카테고리(cat)별로 묶어서 표시 — 배열에서 같은 카테고리가 연속으로 나오면 한 카드 안에 여러 Q&A로 모아서 보여준다
 const FAQ_ITEMS = [
-  { q:'등급(S/A/B+/B/C)은 어떤 기준으로 산출되나요?', qEn:'How are the grades (S/A/B+/B/C) calculated?',
-    a:'팀장평가는 팀장(1차 평가자)이 학습/소통·협력/실행/종합의견을 종합적으로 판단하여 부여합니다. 과제평가는 2차 평가자(들)가 공통(20%)·학습·실행(30%)·소통·협력(25%)·성장(25%) 항목을 채점한 총점(100점 만점)을 기준으로 S(95점 이상)·A(90점 이상)·B+(85점 이상)·B(80점 이상)·C(80점 미만)로 환산됩니다. 과제피어평가도 동일한 환산 기준을 사용합니다.',
-    aEn:'The Team Leader Evaluation grade is the lead evaluator\'s overall judgment across Learning / Communication·Collaboration / Execution / Overall Opinion. The Assignment Evaluation grade is converted from the 100-point total (Common 20% / Learning & Execution 30% / Communication 25% / Growth 25%): S (95+), A (90+), B+ (85+), B (80+), C (below 80). Peer evaluation scores use the same conversion.' },
-  { q:'평가 결과를 인턴과 면담할 때 어떤 순서로 설명하면 좋을까요?', qEn:'What order should I follow when discussing results with the intern?',
+  { cat:'면담 진행', catEn:'Interview Flow',
+    q:'평가 결과를 인턴과 면담할 때 어떤 순서로 설명하면 좋을까요?', qEn:'What order should I follow when discussing results with the intern?',
     a:'① 그동안의 노력과 성과에 대한 인정 → ② 팀장평가 의견(학습/소통·협력/실행/종합의견) 공유 → ③ 과제평가·피어평가 결과 및 구체적인 피드백(잘한 점/보완할 점) 공유 → ④ 재계약검토 결과 및 향후 인원관리계획(수행업무·육성전략) 안내 → ⑤ 질의응답 순으로 진행하는 것을 권장합니다. 부정적 피드백은 구체적 사례와 함께 개선 방향을 제시하는 방식으로 전달해 주세요.',
     aEn:'We recommend: ① Acknowledge effort and achievements → ② Share the Team Leader Evaluation opinion → ③ Share Assignment/Peer Evaluation results with concrete strengths/improvement points → ④ Explain the contract-renewal decision and the personnel plan → ⑤ Q&A. Deliver constructive feedback with specific examples and a clear improvement direction.' },
-  { q:'재계약검토(정규직전환/계약연장/계약종료) 결과는 누가 결정하나요?', qEn:'Who makes the final contract-renewal decision?',
-    a:'1차 평가자(팀장)의 재계약검토 의견을 기초 자료로 하되, 최종 결정은 소속 본부 및 인사(공장관리팀)와의 협의를 거쳐 확정됩니다. 결과확인 화면의 값은 팀장이 제출한 의견이며, 최종 확정 전까지는 참고용으로 안내해 주세요.',
-    aEn:'The lead evaluator\'s recommendation is the starting point, but the final decision is confirmed after consultation with the relevant HQ and HR (Plant Management Team). The value shown here is the team leader\'s submitted opinion — please present it as a reference until it is formally finalized.' },
-  { q:'인사평가 / 다면평가 항목은 무엇을 의미하나요?', qEn:'What do the HR Evaluation / Multi-rater Feedback sections mean?',
-    a:'인사평가는 별도의 인사 프로세스(정기 인사평가 등)에서 산출된 결과를 참고용으로 함께 보여주는 항목이며, 다면평가는 특정 시점(예: 26년 상반기, 25년 하반기)에 수집된 동료·유관부서의 긍정/부정 피드백 비율을 보여줍니다. 두 항목 모두 이 시스템에서 직접 입력하지 않고, 별도 프로세스의 결과를 반영한 값입니다.',
-    aEn:'HR Evaluation shows results from a separate regular HR evaluation process, for reference. Multi-rater Feedback shows the positive/negative feedback ratio collected from peers and related departments at a specific point in time (e.g., 1H 2026, 2H 2025). Neither is entered directly in this system — both reflect results from other processes.' },
-  { q:'평가 결과를 수정하고 싶은데 이미 최종 제출되었습니다. 어떻게 하나요?', qEn:'The evaluation was already finally submitted — can it still be changed?',
-    a:'최종 제출 후에는 평가자 화면에서 직접 수정할 수 없도록 잠겨 있습니다. 수정이 꼭 필요한 경우, 공장관리팀으로 사번/평가 항목/수정 사유를 알려주시면 시트에서 직접 확인 후 처리해 드립니다.',
-    aEn:'Once finally submitted, the evaluator screens are locked and cannot be edited directly. If a correction is truly needed, please contact the Plant Management Team with the employee ID, the field, and the reason, and it will be corrected directly in the sheet.' },
-  { q:'평가 이력(과거 회차) 데이터는 어디서 볼 수 있나요?', qEn:'Where can I see past evaluation cycles for the same employee?',
-    a:'각 인턴 상세보기 화면 상단의 "🕘 평가 이력 보기" 버튼을 누르면 동일 사번의 과거 회차 기록(사이트·부서·과제명·평가결과 등)을 모두 확인할 수 있습니다.',
-    aEn:'Click "🕘 View Evaluation History" at the top of each intern\'s detail view to see all past-cycle records (site, department, project, evaluation results, etc.) for the same employee ID.' }
+  { cat:'계약', catEn:'Contract',
+    q:'정규직 전환되려면 어떻게 해야 하나요?', qEn:'What does it take to convert to a regular (full-time) position?',
+    a:'1년단위 (매년) 평가를 통해 정규직 전환, 계약연장, 종료 여부를 평가합니다. 본인 업무와 과제, 전반을 이해하고 빠르게 우수한 성과를 내주시기 바랍니다. 성과를 내기 위해서는 피드백을 수용하는 동료들과 소통/협업을 잘 할 수 있도록 해주시기 바랍니다.',
+    aEn:'Conversion to a regular position, contract renewal, or contract end is decided through an annual (once a year) evaluation. Please understand your role and assignment thoroughly and deliver strong results quickly. To achieve good results, be open to feedback and communicate/collaborate well with colleagues.' },
+  { cat:'향후 계획', catEn:'Future Plans',
+    q:'추후 인도네시아에서 근무해야 하나요?', qEn:'Will I be required to work in Indonesia in the future?',
+    a:'26년에는 인도네시아 셀라톡스, 치카랑공장 셋업을 본격화 하면서 인니로 CDP할 기회가 있을 수 있습니다. 인니 신공장 시스템 구축, 셋팅 업무 등을 담당하는 역할을 맡을 수 있습니다.',
+    aEn:'In 2026, as the Selatox and Cikarang plant setups in Indonesia move into full swing, there may be an opportunity for a CDP assignment to Indonesia. This could involve a role setting up and configuring systems for the new Indonesian plant.' },
+  { cat:'기숙사', catEn:'Dormitory',
+    q:'기숙사에는 언제까지 거주 가능한가요?', qEn:'How long can I stay in the dormitory?',
+    a:'기숙사는 1년 제공하는 것이 원칙이며, 기숙사에 잔여석(인원)이 남아있을 경우 거주 기간을 연장할 수 있습니다. 기숙사 거주 기간 내 퇴실을 희망하는 경우 최소 2주 전까지 생산지원팀에 공유해주시고, 퇴실 절차(체크리스트 작성 및 검토)를 진행해 주셔야 합니다. 계약종료자의 경우, 생산지원팀과 논의하여 거주기간을 30일 이내에 연장할 수 있습니다.',
+    aEn:'As a rule, the dormitory is provided for one year, and the stay can be extended if space remains available. If you wish to move out before your dormitory period ends, please inform the Production Support Team at least 2 weeks in advance and complete the move-out procedure (checklist and review). For employees whose contract has ended, the stay can be extended by up to 30 days after discussion with the Production Support Team.' },
+  { cat:'비자', catEn:'Visa',
+    q:'비자 연장은 어떻게 하나요?', qEn:'How do I extend my visa?',
+    a:'비자 관련된 사항은 생산지원팀에서 별도로 안내했습니다. 해당 절차에 따라 주시기 바랍니다.',
+    aEn:'Visa-related matters are guided separately by the Production Support Team. Please follow the procedure they provide.' },
+  { cat:'계약종료자', catEn:'Contract-Ended Staff',
+    q:'계약종료자는 최종근무일이 언제까지 인가요?', qEn:'For an employee whose contract has ended, what is the last working day?',
+    a:'계약기간까지 이며, 해당일자까지 출근(연차사용 가능) 후 계약 종료됩니다.',
+    aEn:'It is the end of the contract period — you work (annual leave may be used) until that date, and the contract ends on that day.' },
+  { cat:'계약종료자', catEn:'Contract-Ended Staff',
+    q:'계약종료자는 언제까지 한국 체류 가능한가요?', qEn:'Until when can a contract-ended employee stay in Korea?',
+    a:'한국 체류 기간은 개인별로 비자 만료일자에 따라 다릅니다. 본인의 외국인 등록증에 적힌 비자 만료일을 확인해 주시기 바랍니다.',
+    aEn:'The allowed stay in Korea varies by individual visa expiration date. Please check the visa expiration date printed on your Alien Registration Card.' },
+  { cat:'계약종료자', catEn:'Contract-Ended Staff',
+    q:'귀국 시 항공편도 회사에서 제공해 주나요?', qEn:'Does the company also provide the return flight home?',
+    a:'입국 시 항공권만 제공하며, 귀국 시에는 개인이 준비해야 합니다.',
+    aEn:'The company only provides the flight for entering Korea; the return flight must be arranged by the individual.' },
+  { cat:'계약종료자', catEn:'Contract-Ended Staff',
+    q:'퇴직금은 지급받을 수 있나요?', qEn:'Can I receive severance pay?',
+    a:'1년 이상 근무한 경우에는 퇴직금이 지급됩니다. 은행에서 IRP 계좌를 만들고 회사에 제출하면, 회사에서 IRP계좌로 입금합니다. 이후, 은행에 방문해서 IRP계좌를 해지하고 퇴직금을 본인 통장으로 입금하면 됩니다.',
+    aEn:'Severance pay is provided if you have worked for one year or more. Open an IRP account at a bank and submit it to the company; the company will deposit the severance pay into that IRP account. Afterward, visit the bank, close the IRP account, and transfer the funds to your own bank account.' },
+  { cat:'어쏘', catEn:'Associate',
+    q:'어쏘 초봉은 얼마인가요?', qEn:'What is the starting salary for an Associate (어쏘)?',
+    a:'글로벌인재 어쏘 초봉은 4,000만원부터 시작합니다.',
+    aEn:'The starting salary for a Global Talent Associate begins at KRW 40 million.' }
 ];
 function renderFaqContent(){
   const wrap=document.getElementById('rv-faq-content');
   if(!wrap) return;
+  // 같은 카테고리가 연속으로 나오면 하나의 카드 안에 여러 Q&A로 모아서 보여준다
+  const groups=[];
+  FAQ_ITEMS.forEach(item=>{
+    const last=groups[groups.length-1];
+    if(last && last.cat===item.cat) last.items.push(item);
+    else groups.push({ cat:item.cat, catEn:item.catEn, items:[item] });
+  });
+  let qNo=0;
   wrap.innerHTML = `
-    <div class="notice-box">
-      아래 내용은 평가 결과를 바탕으로 인턴/현업 부서와 면담할 때 참고할 수 있도록 정리한 가이드입니다. 실제 운영 중 자주 나오는 질문이 있다면 공장관리팀으로 알려주시면 계속 보완하겠습니다.<br>
-      <span class="en">The guide below is a reference for interview conversations based on the evaluation results. If you notice frequently asked questions during actual operation, please let the Plant Management Team know so we can keep improving it.</span>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:19px;font-weight:800;margin-bottom:2px;">면담 가이드</h2>
+        <div style="font-size:12.5px;color:var(--text-tertiary);">인턴 면담 시 참고 자료 · <span class="en">Reference for Intern Interviews</span></div>
+      </div>
+      <button type="button" class="btn btn-ghost" onclick="renderFaqContent()">🔄 새로고침 · Refresh</button>
     </div>
-    ${FAQ_ITEMS.map((f,i)=>`
-      <div class="card">
-        <div class="card-title"><span class="tag">Q${i+1}</span><div class="line"></div></div>
-        <div style="font-size:14px;font-weight:800;margin-bottom:2px;">${esc_(f.q)}</div>
-        <div class="en" style="font-size:12.5px;margin-bottom:12px;">${esc_(f.qEn)}</div>
-        <div style="font-size:13px;line-height:1.75;color:var(--text-secondary);white-space:pre-wrap;">${esc_(f.a)}</div>
-        <div class="en" style="font-size:12px;line-height:1.7;margin-top:8px;white-space:pre-wrap;">${esc_(f.aEn)}</div>
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-title"><span class="tag">💬 글로벌인재 FAQ · Interview Guide</span><div class="line"></div></div>
+      <div style="font-size:13px;line-height:1.7;color:var(--text-secondary);">
+        인턴과의 면담 시 참고할 수 있는 자주 묻는 질문(FAQ) 모음입니다.<br>
+        <span class="en">Frequently asked questions for managers to reference during intern interviews.</span>
+      </div>
+    </div>
+    ${groups.map(g=>`
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title"><span class="tag">${esc_(g.cat)} · ${esc_(g.catEn)}</span><div class="line"></div></div>
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          ${g.items.map((f,gi)=>{
+            qNo++;
+            const sep = gi>0 ? 'padding-top:16px;border-top:1px solid var(--border-subtle);' : '';
+            return `<div style="${sep}">
+              <div style="font-size:14px;font-weight:800;margin-bottom:2px;">Q${qNo}. ${esc_(f.q)}</div>
+              <div class="en" style="font-size:12.5px;margin-bottom:10px;">${esc_(f.qEn)}</div>
+              <div style="font-size:13px;line-height:1.75;color:var(--text-secondary);white-space:pre-wrap;">${esc_(f.a)}</div>
+              <div class="en" style="font-size:12px;line-height:1.7;margin-top:6px;white-space:pre-wrap;">${esc_(f.aEn)}</div>
+            </div>`;
+          }).join('')}
+        </div>
       </div>`).join('')}`;
 }
 const GRADE_CLASS_ = {'S':'g-S','A':'g-A','B+':'g-Bplus','B':'g-B','C':'g-C'};
